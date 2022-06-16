@@ -39,12 +39,39 @@ class Database:
 """
         self.execute(sql, commit=True)
 
+    def create_table_channel(self):
+        sql = """
+        CREATE TABLE channel(
+            link varchar(255) NOT NULL,
+            PRIMARY KEY (link)
+            );
+"""
+        self.execute(sql, commit=True)
+
     @staticmethod
     def format_args(sql, parameters: dict):
         sql += " AND ".join([
             f"{item} = ?" for item in parameters
         ])
         return sql, tuple(parameters.values())
+
+    def add_channel(self, link: str):
+        sql = """
+        INSERT INTO channel(link) VALUES(?)
+        """
+        self.execute(sql, parameters=(link,), commit=True)
+
+    def get_channel(self):
+        sql = """
+        SELECT * FROM channel
+        """
+        return self.execute(sql, fetchall=True)
+
+    def delete_channel(self, link):
+        sql = """
+        DELETE FROM channel WHERE link=?
+        """
+        self.execute(sql, parameters=(link,), commit=True)
 
     def add_user(self, id: int, name: str, email: str = None, language: str = 'uz'):
         # SQL_EXAMPLE = "INSERT INTO Users(id, Name, email) VALUES(1, 'John', 'John@gmail.com')"
